@@ -1,0 +1,6 @@
+      PID    PPID    PGID     WINPID   TTY         UID    STIME COMMAND
+     1473    1465    1465       8928  cons1     197610 13:08:49 /c/nvm4w/nodejs/node
+     1582    1523    1582      10216  cons0     197610 22:10:57 /usr/bin/PS
+     1465    1319    1465      10212  cons1     197610 13:08:48 /usr/bin/bash
+     1523       1    1523       4380  cons0     197610 22:10:43 /usr/bin/bash
+     1319       1    1319      15000  cons1     197610 12:55:32 /usr/bin/bash
