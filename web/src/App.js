@@ -29,6 +29,13 @@ function App() {
     fetchEmployees();
   };
 
+  const deleteEmployee = async (id) => {
+    await fetch(`http://localhost:5000/employees/${id}`, {
+      method: "DELETE",
+    });
+    fetchEmployees();
+  };
+
   return (
     <div style={{ padding: "20px" }}>
       <h2>Employee Todo App</h2>
@@ -45,6 +52,7 @@ function App() {
         {employees.map(emp => (
           <li key={emp.id}>
             {emp.name} - {emp.role} - ₹{emp.salary}
+            <button onClick={() => deleteEmployee(emp.id)} style={{ marginLeft: "10px" }}>Delete</button>
           </li>
         ))}
       </ul>

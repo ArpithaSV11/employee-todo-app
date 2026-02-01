@@ -35,6 +35,19 @@ app.post("/employees", async (req, res) => {
   res.json(employee);
 });
 
+// Delete employee
+app.delete("/employees/:id", async (req, res) => {
+  const { id } = req.params;
+
+  const employee = await prisma.employee.delete({
+    where: {
+      id: Number(id),
+    },
+  });
+
+  res.json(employee);
+});
+
 app.listen(5000, () => {
   console.log("Backend running on http://localhost:5000");
 });
