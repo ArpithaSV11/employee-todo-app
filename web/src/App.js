@@ -1,25 +1,40 @@
 import { useEffect, useState } from "react";
+import { useAuth0 } from "@auth0/auth0-react";
+
 
 function App() {
+  const { loginWithRedirect, logout, isAuthenticated, getAccessTokenSilently , user,isLoading,}= useAuth0(); 
+                                                                                                       
   const [employees, setEmployees] = useState([]);
   const [name, setName] = useState("");
   const [role, setRole] = useState("");
   const [salary, setSalary] = useState("");
 
   useEffect(() => {
-    fetchEmployees();
-  }, []);
+    if (isAuthenticated) fetchEmployees();
+  }, [isAuthenticated]);
 
   const fetchEmployees = async () => {
-    const res = await fetch("http://localhost:5000/employees");
+    const token = await getAccessTokenSilently({
+      audience: "employee-api"
+    });
+;
+    const res = await fetch("http://localhost:5000/employees",{
+      headers: {
+        Authorization: `Bearer ${token}`, // Sending the token in the Authorization header                                                                                                                                                                    
+      },
+    });
     const data = await res.json();
     setEmployees(data);
   };
 
   const addEmployee = async () => {
+    const token = await getAccessTokenSilently({
+      audience: "employee-api"
+    });
     await fetch("http://localhost:5000/employees", {
       method: "POST",
-      headers: { "Content-Type": "application/json" },
+      headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
       body: JSON.stringify({ name, role, salary }),
     });
 
@@ -29,16 +44,27 @@ function App() {
     fetchEmployees();
   };
 
-  const deleteEmployee = async (id) => {
+  const deleteEmployee = async (id) => { 
+    const token = await getAccessTokenSilently({
+      audience: "employee-api"
+    });
     await fetch(`http://localhost:5000/employees/${id}`, {
       method: "DELETE",
+      headers: { Authorization: `Bearer ${token}` },
     });
     fetchEmployees();
   };
 
+  if (isLoading) {
+  return <div>Loading...</div>;
+  }
+
+  if (!isAuthenticated) {
+    return <button onClick={() => loginWithRedirect()}>Login</button>;
+  }
   return (
     <div style={{ padding: "20px" }}>
-      <h2>Employee Todo App</h2>
+      <h2>Employee Todo App - Welcome, {user.name}</h2>
 
       <input placeholder="Name" value={name} onChange={e => setName(e.target.value)} />
       <br />
@@ -56,6 +82,7 @@ function App() {
           </li>
         ))}
       </ul>
+      <button onClick={() => logout()}>Logout</button>
     </div>
   );
 }
